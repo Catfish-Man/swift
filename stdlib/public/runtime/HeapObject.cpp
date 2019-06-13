@@ -100,8 +100,10 @@ static void _swift_setAssociatedObject_hook(
 }
 
 static void _interpose_objc_association(void *ctxt) {
-  objc_setHook_setAssociatedObject(_swift_setAssociatedObject_hook,
-                                   &originalAssocObjectFunc);
+  if (__builtin_available(macOS 10.15, iOS 13, tvOS 13, watchOS 6, *))) {
+    objc_setHook_setAssociatedObject(_swift_setAssociatedObject_hook,
+                                     &originalAssocObjectFunc);
+  }
 }
 #endif
 
