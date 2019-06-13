@@ -406,7 +406,8 @@ class RefCountBitsT {
   
   LLVM_ATTRIBUTE_ALWAYS_INLINE
   void setIsImmortal(bool value) {
-    setField(IsImmortal, value ? Offsets::IsImmortalMask : 0);
+    assert(value);
+    setField(IsImmortal, Offsets::IsImmortalMask);
     setField(UseSlowRC, value);
   }
   
@@ -772,6 +773,7 @@ class RefCounts {
     //Immortal and no objc complications share a bit, so don't let setting
     //the complications one clear the immmortal one
     if (oldbits.isImmortal(true) || oldbits.pureSwiftDeallocation() == nonobjc){
+      assert(!oldbits.hasSideTable())
       return;
     }
     RefCountBits newbits;
