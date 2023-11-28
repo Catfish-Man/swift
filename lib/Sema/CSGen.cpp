@@ -4692,6 +4692,11 @@ generateForEachStmtConstraints(ConstraintSystem &cs,
     if (!patternType)
       return llvm::None;
 
+    if (auto whereClause = stmt->getWhere()) {
+      cs.recordFix(IgnoreWhereClauseInPackIteration::create(
+          cs, cs.getConstraintLocator(whereClause)));
+    }
+
     auto packIterationInfo =
         generateForEachStmtConstraints(cs, dc, expansion, patternType);
     if (!packIterationInfo) {

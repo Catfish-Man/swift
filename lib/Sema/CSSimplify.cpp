@@ -14908,6 +14908,7 @@ ConstraintSystem::SolutionKind ConstraintSystem::simplifyFixConstraint(
   case FixKind::AllowInvalidPackElement:
   case FixKind::AllowInvalidPackReference:
   case FixKind::AllowInvalidPackExpansion:
+  case FixKind::IgnoreWhereClauseInPackIteration:
   case FixKind::MacroMissingPound:
   case FixKind::AllowGlobalActorMismatch:
   case FixKind::AllowAssociatedValueMismatch:
