@@ -7091,6 +7091,14 @@ static bool hasIteratorAPIAttr(const clang::Decl *decl) {
          });
 }
 
+static bool hasNonCopyableAttr(const clang::RecordDecl *decl) {
+  return decl->hasAttrs() && llvm::any_of(decl->getAttrs(), [](auto *attr) {
+           if (auto swiftAttr = dyn_cast<clang::SwiftAttrAttr>(attr))
+             return swiftAttr->getAttribute() == "~Copyable";
+           return false;
+         });
+}
+
 /// Recursively checks that there are no pointers in any fields or base classes.
 /// Does not check C++ records with specific API annotations.
 static bool hasPointerInSubobjects(const clang::CXXRecordDecl *decl) {
@@ -7308,6 +7316,10 @@ CxxRecordSemantics::evaluate(Evaluator &evaluator,
                               "import_iterator", decl->getNameAsString());
 
     return CxxRecordSemanticsKind::MissingLifetimeOperation;
+  }
+
+  if (hasNonCopyableAttr(cxxDecl) && hasMoveTypeOperations(cxxDecl)) {
+    return CxxRecordSemanticsKind::MoveOnly;
   }
 
   if (hasOwnedValueAttr(cxxDecl)) {
