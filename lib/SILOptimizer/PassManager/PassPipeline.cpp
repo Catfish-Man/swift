@@ -255,6 +255,11 @@ static void addMandatoryDiagnosticOptPipeline(SILPassPipelinePlan &P) {
   P.addOnoneSimplification();
   P.addAllocVectorLowering();
   P.addInitializeStaticGlobals();
+
+  if (P.getOptions().EmbeddedSwift) {
+    P.addDeadFunctionAndGlobalElimination();
+  }
+
   P.addPerformanceDiagnostics();
 }
 
