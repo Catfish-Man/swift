@@ -731,6 +731,7 @@ struct BridgedArgument {
   SWIFT_IMPORT_UNSAFE BRIDGED_INLINE BridgedBasicBlock getParent() const;
   BRIDGED_INLINE BridgedArgumentConvention getConvention() const;
   BRIDGED_INLINE bool isSelf() const;
+  BRIDGED_INLINE bool isReborrow() const;
 };
 
 struct OptionalBridgedArgument {
