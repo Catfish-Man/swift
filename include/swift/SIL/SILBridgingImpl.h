@@ -435,9 +435,7 @@ bool BridgedArgument::hasResultDependsOn() const {
   return fArg->hasResultDependsOn();
 }
 
-bool BridgedArgument::isReborrow() const {
-  return getArgument()->isReborrow();
-}
+bool BridgedArgument::isReborrow() const { return getArgument()->isReborrow(); }
 
 //===----------------------------------------------------------------------===//
 //                            BridgedSubstitutionMap
@@ -591,6 +589,10 @@ bool BridgedFunction::hasSemanticsAttr(BridgedStringRef attrName) const {
 
 bool BridgedFunction::hasUnsafeNonEscapableResult() const {
   return getFunction()->hasUnsafeNonEscapableResult();
+}
+
+bool BridgedFunction::hasResultDependsOnSelf() const {
+  return getFunction()->hasResultDependsOnSelf();
 }
 
 BridgedFunction::EffectsKind BridgedFunction::getEffectAttribute() const {
