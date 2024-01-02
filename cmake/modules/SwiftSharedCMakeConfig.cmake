@@ -295,11 +295,6 @@ macro(swift_common_unified_build_config product)
   endif()
 
   include(AddSwiftTableGen) # This imports TableGen from LLVM.
-
-  check_cxx_compiler_flag("-Werror -Wnested-anon-types" CXX_SUPPORTS_NO_NESTED_ANON_TYPES_FLAG)
-  if(CXX_SUPPORTS_NO_NESTED_ANON_TYPES_FLAG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-nested-anon-types")
-  endif()
 endmacro()
 
 # Common cmake project config for additional warnings.
@@ -327,6 +322,11 @@ macro(swift_common_cxx_warnings)
 
   check_cxx_compiler_flag("-Werror -Woverloaded-virtual" CXX_SUPPORTS_OVERLOADED_VIRTUAL)
   append_if(CXX_SUPPORTS_OVERLOADED_VIRTUAL "-Woverloaded-virtual" CMAKE_CXX_FLAGS)
+
+  check_cxx_compiler_flag("-Werror -Wnested-anon-types" CXX_SUPPORTS_NO_NESTED_ANON_TYPES_FLAG)
+  if(CXX_SUPPORTS_NO_NESTED_ANON_TYPES_FLAG)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-nested-anon-types")
+  endif()
 
   # Check for '-fapplication-extension'.  On OS X/iOS we wish to link all
   # dynamic libraries with this flag.
