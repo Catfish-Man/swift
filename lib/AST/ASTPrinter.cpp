@@ -2732,6 +2732,8 @@ void PrintAST::printInherited(const Decl *decl) {
     if (inherited.isRetroactive &&
         !llvm::is_contained(Options.ExcludeAttrList, TAK_retroactive))
       Printer << "@retroactive ";
+    if (inherited.isPreconcurrency)
+      Printer << "@preconcurrency ";
 
     printTypeLoc(inherited);
   }, [&]() {
@@ -8317,7 +8319,8 @@ swift::getInheritedForPrinting(
 
     Results.push_back({TypeLoc::withoutLoc(proto->getDeclaredInterfaceType()),
                        isUnchecked,
-                       /*isRetroactive=*/false});
+                       /*isRetroactive=*/false,
+                       /*isPreconcurrency=*/false});
   }
 }
 
