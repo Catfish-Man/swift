@@ -1925,8 +1925,7 @@ PatternBindingDecl::create(ASTContext &Ctx, SourceLoc StaticLoc,
                           PBD->getTrailingObjects<PatternBindingEntry>());
 
   for (auto idx : range(PBD->getNumPatternEntries())) {
-    auto *initContext =
-        cast_or_null<PatternBindingInitializer>(PBD->getInitContext(idx));
+    auto *initContext = PBD->getInitContext(idx);
 
     // FIXME: We ought to reconsider this since it won't recontextualize any
     // closures/decls present in the initialization expr. This currently should
@@ -2003,6 +2002,13 @@ ParamDecl *PatternBindingInitializer::getImplicitSelfDecl() const {
   }
 
   return SelfParam;
+}
+
+void PatternBindingInitializer::setBinding(PatternBindingDecl *binding,
+                                           unsigned bindingIndex) {
+  setParent(binding->getDeclContext());
+  Binding = binding;
+  SpareBits = bindingIndex;
 }
 
 VarDecl *PatternBindingInitializer::getInitializedLazyVar() const {
@@ -2233,7 +2239,7 @@ PatternBindingDecl::getCheckedPatternBindingEntry(unsigned i) const {
 }
 
 void PatternBindingDecl::setPattern(unsigned i, Pattern *P,
-                                    DeclContext *InitContext,
+                                    PatternBindingInitializer *InitContext,
                                     bool isFullyValidated) {
   auto PatternList = getMutablePatternList();
   PatternList[i].setPattern(P);
@@ -2251,7 +2257,6 @@ void PatternBindingDecl::setPattern(unsigned i, Pattern *P,
       PatternList[i].setFullyValidated();
   }
 }
-
 
 VarDecl *PatternBindingDecl::getSingleVar() const {
   if (getNumPatternEntries() == 1)
