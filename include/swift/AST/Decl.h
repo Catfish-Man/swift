@@ -2318,9 +2318,7 @@ public:
     return getPatternList()[i].getPattern();
   }
 
-  void setPattern(unsigned i, Pattern *Pat,
-                  PatternBindingInitializer *InitContext,
-                  bool isFullyValidated = false);
+  void setPattern(unsigned i, Pattern *P, bool isFullyValidated = false);
 
   bool isFullyValidated(unsigned i) const {
     return getPatternList()[i].isFullyValidated();
@@ -2328,6 +2326,13 @@ public:
 
   PatternBindingInitializer *getInitContext(unsigned i) const {
     return getPatternList()[i].getInitContext();
+  }
+
+  void setInitContext(unsigned i, PatternBindingInitializer *init) {
+    if (init) {
+      init->setBinding(this, i);
+    }
+    getMutablePatternList()[i].setInitContext(init);
   }
 
   CaptureInfo getCaptureInfo(unsigned i) const {
