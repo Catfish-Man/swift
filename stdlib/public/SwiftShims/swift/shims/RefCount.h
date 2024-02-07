@@ -760,8 +760,8 @@ class RefCounts {
     do {
       newbits = oldbits;
       newbits.setIsImmortal(immortal);
-    } while (!refCounts.compare_exchange_weak(oldbits, newbits,
-                                              std::memory_order_relaxed));
+    } while (SWIFT_UNLIKELY(!refCounts.compare_exchange_weak(oldbits, newbits,
+                                                             std::memory_order_relaxed)));
   }
   
   void setPureSwiftDeallocation(bool nonobjc) {
@@ -783,8 +783,8 @@ class RefCounts {
     do {
       newbits = oldbits;
       newbits.setPureSwiftDeallocation(nonobjc);
-    } while (!refCounts.compare_exchange_weak(oldbits, newbits,
-                                              std::memory_order_relaxed));
+    } while (SWIFT_UNLIKELY(!refCounts.compare_exchange_weak(oldbits, newbits,
+                                                             std::memory_order_relaxed)));
   }
   
   bool getPureSwiftDeallocation() {
@@ -822,8 +822,8 @@ class RefCounts {
           return getHeapObject();
         return incrementSlow(oldbits, inc);
       }
-    } while (!refCounts.compare_exchange_weak(oldbits, newbits,
-                                              std::memory_order_relaxed));
+    } while (SWIFT_UNLIKELY(!refCounts.compare_exchange_weak(oldbits, newbits,
+                                                             std::memory_order_relaxed)));
     return getHeapObject();
   }
 
@@ -863,8 +863,8 @@ class RefCounts {
           return true;
         return tryIncrementSlow(oldbits);
       }
-    } while (!refCounts.compare_exchange_weak(oldbits, newbits,
-                                              std::memory_order_relaxed));
+    } while (SWIFT_UNLIKELY(!refCounts.compare_exchange_weak(oldbits, newbits,
+                                                             std::memory_order_relaxed)));
     return true;
   }
 
@@ -1033,9 +1033,9 @@ class RefCounts {
         newbits.setStrongExtraRefCount(0);
         newbits.setIsDeiniting(true);
       }
-    } while (!refCounts.compare_exchange_weak(oldbits, newbits,
-                                              std::memory_order_release,
-                                              std::memory_order_relaxed));
+    } while (SWIFT_UNLIKELY(!refCounts.compare_exchange_weak(oldbits, newbits,
+                                                             std::memory_order_release,
+                                                             std::memory_order_relaxed)));
     if (performDeinit && deinitNow) {
       std::atomic_thread_fence(std::memory_order_acquire);
       _swift_release_dealloc(getHeapObject());
@@ -1116,9 +1116,9 @@ class RefCounts {
         // Slow paths include side table; deinit; underflow
         return doDecrementSlow<performDeinit>(oldbits, dec);
       }
-    } while (!refCounts.compare_exchange_weak(oldbits, newbits,
-                                              std::memory_order_release,
-                                              std::memory_order_relaxed));
+    } while (SWIFT_UNLIKELY(!refCounts.compare_exchange_weak(oldbits, newbits,
+                                                             std::memory_order_release,
+                                                             std::memory_order_relaxed)));
 
     return false;  // don't deinit
   }
@@ -1149,8 +1149,8 @@ class RefCounts {
       if (newbits.isOverflowingUnownedRefCount(oldValue, inc))
         return incrementUnownedSlow(inc);
 
-    } while (!refCounts.compare_exchange_weak(oldbits, newbits,
-                                              std::memory_order_relaxed));
+    } while (SWIFT_UNLIKELY(!refCounts.compare_exchange_weak(oldbits, newbits,
+                                                             std::memory_order_relaxed)));
   }
 
   void incrementUnownedNonAtomic(uint32_t inc) {
@@ -1196,8 +1196,8 @@ class RefCounts {
         performFree = false;
       }
       // FIXME: underflow check?
-    } while (!refCounts.compare_exchange_weak(oldbits, newbits,
-                                              std::memory_order_relaxed));
+    } while (SWIFT_UNLIKELY(!refCounts.compare_exchange_weak(oldbits, newbits,
+                                                             std::memory_order_relaxed)));
     return performFree;
   }
 
@@ -1256,8 +1256,8 @@ class RefCounts {
       
       if (newbits.getWeakRefCount() < oldbits.getWeakRefCount())
         swift_abortWeakRetainOverflow();
-    } while (!refCounts.compare_exchange_weak(oldbits, newbits,
-                                              std::memory_order_relaxed));
+    } while (SWIFT_UNLIKELY(!refCounts.compare_exchange_weak(oldbits, newbits,
+                                                             std::memory_order_relaxed)));
   }
   
   bool decrementWeakShouldCleanUp() {
@@ -1268,8 +1268,8 @@ class RefCounts {
     do {
       newbits = oldbits;
       performFree = newbits.decrementWeakRefCount();
-    } while (!refCounts.compare_exchange_weak(oldbits, newbits,
-                                              std::memory_order_relaxed));
+    } while (SWIFT_UNLIKELY(!refCounts.compare_exchange_weak(oldbits, newbits,
+                                                             std::memory_order_relaxed)));
 
     return performFree;
   }
